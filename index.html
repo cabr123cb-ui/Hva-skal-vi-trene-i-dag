@@ -1,58 +1,173 @@
-<!doctype html><html lang="no"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#687a59"><link rel="manifest" href="manifest.webmanifest">
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#687a59">
+<link rel="manifest" href="manifest.webmanifest">
 <title>🎯 Hva skal vi trene i dag?</title>
 <style>
-body{margin:0;background:#f5f4ef;color:#263126;font-family:system-ui,sans-serif}main{max-width:680px;margin:auto;padding:18px 14px 40px}
+body{margin:0;background:#f5f4ef;color:#263126;font-family:system-ui,sans-serif}
+main{max-width:680px;margin:auto;padding:18px 14px 40px}
 .hero{text-align:center}.hero div{font-size:45px}h1{font-size:28px;margin:4px}.muted{color:#687267}
 .card{background:white;border:1px solid #dfe4db;border-radius:20px;padding:18px;margin:12px 0}
-label{display:block;font-weight:700;margin:14px 0 7px}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+label{display:block;font-weight:700;margin:14px 0 7px}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 button{font:inherit;border:1px solid #dfe4db;border-radius:13px;padding:11px 7px;background:white;font-weight:650;color:#263126}
-button.sel{background:#e7eddf;border-color:#687a59}.primary{width:100%;margin-top:16px;background:#687a59;color:white;border:0;padding:15px;font-size:18px}
+button.sel{background:#e7eddf;border-color:#687a59}
+.primary{width:100%;margin-top:16px;background:#687a59;color:white;border:0;padding:15px;font-size:18px}
 .step{border:1px solid #dfe4db;border-radius:14px;padding:13px;margin:9px 0}.step b{font-size:17px}
 #result{display:none}.row{display:flex;gap:8px}.row button{flex:1}.small{font-size:13px;color:#687267}
-</style></head><body><main>
+</style>
+</head>
+<body>
+<main>
 <div class="hero"><div>🎯</div><h1>Hva skal vi trene i dag?</h1><p class="muted">Lag en liten, passende treningsøkt på noen sekunder.</p></div>
 
 <div class="card">
-<label>⏱️ Tid</label><div class="choices" data-g="time">
-<button data-v="10">10 min</button><button class="sel" data-v="20">20 min</button><button data-v="30">30 min</button></div>
-<label>📍 Sted</label><div class="choices" data-g="place">
-<button data-v="hjemme">Hjemme</button><button class="sel" data-v="ute">Ute</button><button data-v="hall">Treningshall</button></div>
-<label>🎯 Fokus</label><div class="choices" data-g="focus">
-<button data-v="lydighet">Lydighet</button><button data-v="rally">Rally</button><button class="sel" data-v="hverdag">Hverdag</button>
-<button data-v="kontakt">Kontakt</button><button data-v="forstyrrelser">Forstyrrelser</button><button data-v="lek">Lek/belønning</button></div>
-<label>📈 Nivå</label><div class="choices" data-g="level">
-<button data-v="rolig">Rolig</button><button class="sel" data-v="middels">Middels</button><button data-v="utfordrende">Utfordrende</button></div>
-<button class="primary" id="go">✨ Lag dagens økt</button></div>
+<label>⏱️ Tid</label>
+<div class="choices" data-g="time">
+<button data-v="10">10 min</button><button class="sel" data-v="20">20 min</button><button data-v="30">30 min</button>
+</div>
 
-<div class="card" id="result"><h2>Dagens økt 🐾</h2><p id="summary" class="muted"></p><div id="plan"></div>
-<div class="row"><button id="again">🔄 Ny økt</button><button id="save">💾 Lagre</button></div></div>
+<label>📍 Sted</label>
+<div class="choices" data-g="place">
+<button data-v="hjemme">Hjemme</button><button class="sel" data-v="ute">Ute</button><button data-v="hall">Treningshall</button>
+</div>
+
+<label>🎯 Fokus</label>
+<div class="choices" data-g="focus">
+<button data-v="lydighet">Lydighet</button><button data-v="rally">Rally</button><button class="sel" data-v="hverdag">Hverdag</button>
+<button data-v="kontakt">Kontakt</button><button data-v="forstyrrelser">Forstyrrelser</button><button data-v="lek">Lek/belønning</button>
+</div>
+
+<label>📈 Nivå</label>
+<div class="choices" data-g="level">
+<button data-v="rolig">Rolig</button><button class="sel" data-v="middels">Middels</button><button data-v="utfordrende">Utfordrende</button>
+</div>
+
+<button class="primary" id="go">✨ Lag dagens økt</button>
+</div>
+
+<div class="card" id="result">
+<h2>Dagens økt 🐾</h2><p id="summary" class="muted"></p><div id="plan"></div>
+<div class="row"><button id="again">🔄 Ny økt</button><button id="save">💾 Lagre</button></div>
+</div>
 
 <div class="card"><h2>📚 Lagrede økter</h2><p class="small">Lagres bare på denne mobilen.</p><div id="history"></div></div>
 </main>
+
 <script>
-const s={time:"20",place:"ute",focus:"hverdag",level:"middels"};
-document.querySelectorAll(".choices").forEach(g=>g.onclick=e=>{if(e.target.tagName!="BUTTON")return;g.querySelectorAll("button").forEach(x=>x.classList.remove("sel"));e.target.classList.add("sel");s[g.dataset.g]=e.target.dataset.v});
-const B={
-lydighet:[["Kontakt","5–8 korte repetisjoner. Belønn frivillig blikk og fokus."],["Fot","3–5 korte repetisjoner med tydelig belønning for riktig posisjon."],["Sitt–bli","Varier litt på tid og avstand, men gjør det lett å lykkes."],["Dekk–bli","Korte, rolige repetisjoner. Belønn før hunden gjør feil."],["Stå","Tren tydelig stå og belønn raskt."],["Innkalling","3–5 glade innkallinger fra kort avstand."],["Apport","2–5 rolige repetisjoner med fokus på grep og avlevering."]],
-rally:[["Vending","Velg en kjent vending og gjør 5 pene repetisjoner."],["Posisjonsskifte","Tren ett kjent posisjonsskifte med fokus på presisjon."],["Tempo","Kort sekvens med normal–sakte–normal."],["Stopp","Tren stopp og videreføring med tydelig belønning."],["Mini-bane","Sett sammen 3–5 kjente skilt."],["Førerfokus","Tren med fokus på hvor du ser, går og plasserer hendene."]],
-hverdag:[["Ro","Belønn hunden for å velge ro i 1–3 minutter."],["Innkalling","Kall inn fra kort avstand og gjør det lønnsomt å komme."],["Gå pent","5 korte starter med belønning for slakt bånd."],["Håndtering","Rolig berøring av poter, ører eller halsbånd."],["Matro","Tren ro rundt godbit eller matskål."],["Miljøsjekk","Rolig sted: belønn at hunden observerer og vender tilbake til deg."]],
-kontakt:[["Frivillig kontakt","Vent på blikk og belønn 8–10 ganger."],["Navn","Si navnet én gang og belønn rask orientering."],["Kontakt i bevegelse","Gå noen skritt, få kontakt, belønn."],["Følg hånden","Rolig håndføring uten hopping."],["Kontakt–fri","Veksle mellom kontakt, fri og kontakt igjen."]],
-forstyrrelser:[["Person","Finn avstand der hunden fortsatt lykkes."],["Lyd","Bruk svak lyd i bakgrunnen og tren kort."],["Hund på avstand","Belønn at hunden kan vende tilbake til deg."],["Nytt sted","Gjør en enkel kjent ferdighet på nytt sted."],["Bevegelse","La en person gå forbi på trygg avstand mens du belønner fokus."]],
-lek:[["Lekestart","Tydelig lekesignal → lek → pause."],["Bytte","Bytt frivillig mellom to leker eller lek og godbit."],["Lek som belønning","2–3 sekunder lek etter en enkel ferdighet."],["Rolig start/slutt","Bruk samme rolige rutine hver gang."],["Favoritt","Finn hvilken belønning hunden virkelig ønsker i dag."]]};
+const state={time:"20",place:"ute",focus:"hverdag",level:"middels"};
+
+const exercises={
+lydighet:[
+["Kontakt","5–8 korte repetisjoner. Belønn frivillig blikk og fokus."],
+["Fot","3–5 korte repetisjoner med tydelig belønning for riktig posisjon."],
+["Sitt–bli","Varier litt på tid og avstand, men gjør det lett å lykkes."],
+["Dekk–bli","Korte, rolige repetisjoner. Belønn før hunden gjør feil."],
+["Stå","Tren tydelig stå og belønn raskt."],
+["Innkalling","3–5 glade innkallinger fra kort avstand."],
+["Apport","2–5 rolige repetisjoner med fokus på grep og avlevering."]
+],
+rally:[
+["Vending","Velg en kjent vending og gjør 5 pene repetisjoner."],
+["Posisjonsskifte","Tren ett kjent posisjonsskifte med fokus på presisjon."],
+["Tempo","Kort sekvens med normal–sakte–normal."],
+["Stopp","Tren stopp og videreføring med tydelig belønning."],
+["Mini-bane","Sett sammen 3–5 kjente skilt."],
+["Førerfokus","Tren med fokus på hvor du ser, går og plasserer hendene."]
+],
+hverdag:[
+["Ro","Belønn hunden for å velge ro i 1–3 minutter."],
+["Innkalling","Kall inn fra kort avstand og gjør det lønnsomt å komme."],
+["Gå pent","5 korte starter med belønning for slakt bånd."],
+["Håndtering","Rolig berøring av poter, ører eller halsbånd."],
+["Matro","Tren ro rundt godbit eller matskål."],
+["Miljøsjekk","Rolig sted: belønn at hunden observerer og vender tilbake til deg."]
+],
+kontakt:[
+["Frivillig kontakt","Vent på blikk og belønn 8–10 ganger."],
+["Navn","Si navnet én gang og belønn rask orientering."],
+["Kontakt i bevegelse","Gå noen skritt, få kontakt, belønn."],
+["Følg hånden","Rolig håndføring uten hopping."],
+["Kontakt–fri","Veksle mellom kontakt, fri og kontakt igjen."]
+],
+forstyrrelser:[
+["Person","Finn avstand der hunden fortsatt lykkes."],
+["Lyd","Bruk svak lyd i bakgrunnen og tren kort."],
+["Hund på avstand","Belønn at hunden kan vende tilbake til deg."],
+["Nytt sted","Gjør en enkel kjent ferdighet på nytt sted."],
+["Bevegelse","La en person gå forbi på trygg avstand mens du belønner fokus."]
+],
+lek:[
+["Lekestart","Tydelig lekesignal → lek → pause."],
+["Bytte","Bytt frivillig mellom to leker eller lek og godbit."],
+["Lek som belønning","2–3 sekunder lek etter en enkel ferdighet."],
+["Rolig start/slutt","Bruk samme rolige rutine hver gang."],
+["Favoritt","Finn hvilken belønning hunden virkelig ønsker i dag."]
+]
+};
+
 function make(){
- let n=s.time=="10"?3:s.time=="20"?4:5, a=[...B[s.focus]].sort(()=>Math.random()-.5).slice(0,n);
- let mins=s.time=="10"?[2,3,3]:s.time=="20"?[3,5,5,4]:[4,5,6,5,5];
- if(s.level=="rolig")a=a.map(x=>[x[0],x[1]+" Hold kriteriene enkle og avslutt mens det går bra."]);
- if(s.level=="utfordrende")a=a.map(x=>[x[0],x[1]+" Hvis hunden lykkes: øk litt på avstand, varighet eller forstyrrelse."]);
- document.getElementById("summary").textContent=s.time+" minutter · "+s.place+" · "+s.level;
- document.getElementById("plan").innerHTML=a.map((x,i)=>'<div class="step"><b>'+(i+1)+". "+x[0]+"</b><div class="small">Ca. "+mins[i]+" min</div><div>"+x[1]+"</div></div>").join("");
- document.getElementById("result").style.display="block";document.getElementById("result").scrollIntoView({behavior:"smooth"});
- window.cur={date:new Date().toLocaleDateString("no-NO"),...s,items:a.map(x=>x[0])};
+  const n=state.time==="10"?3:state.time==="20"?4:5;
+  let items=[...exercises[state.focus]].sort(()=>Math.random()-.5).slice(0,n);
+  const mins=state.time==="10"?[2,3,3]:state.time==="20"?[3,5,5,4]:[4,5,6,5,5];
+
+  if(state.level==="rolig") items=items.map(x=>[x[0],x[1]+" Hold kriteriene enkle og avslutt mens det går bra."]);
+  if(state.level==="utfordrende") items=items.map(x=>[x[0],x[1]+" Hvis hunden lykkes: øk litt på avstand, varighet eller forstyrrelse."]);
+
+  document.getElementById("summary").textContent=state.time+" minutter · "+state.place+" · "+state.level;
+  document.getElementById("plan").innerHTML=items.map((x,i)=>
+    '<div class="step"><b>'+(i+1)+". "+x[0]+"</b><div class=\"small\">Ca. "+mins[i]+" min</div><div>"+x[1]+"</div></div>"
+  ).join("");
+
+  document.getElementById("result").style.display="block";
+  document.getElementById("result").scrollIntoView({behavior:"smooth"});
+  window.cur={date:new Date().toLocaleDateString("no-NO"),...state,items:items.map(x=>x[0])};
 }
-go.onclick=make;again.onclick=make;
-save.onclick=()=>{let h=JSON.parse(localStorage.dogPlans||"[]");h.unshift(window.cur);localStorage.dogPlans=JSON.stringify(h.slice(0,30));render();alert("Økten er lagret 🐾")};
-function render(){let h=JSON.parse(localStorage.dogPlans||"[]");history.innerHTML=h.length?h.map((x,i)=>'<div class="step"><b>'+x.date+" · "+x.time+" min</b><div class="small">"+x.focus+" · "+x.place+" · "+x.level+"</div><div>"+x.items.join(" · ")+'</div><button onclick="del('+i+')">Slett</button></div>').join(""):"<p class="small">Ingen lagrede økter ennå.</p>"}
-function del(i){let h=JSON.parse(localStorage.dogPlans||"[]");h.splice(i,1);localStorage.dogPlans=JSON.stringify(h);render()}render();
-</script></body></html>
+
+document.querySelectorAll(".choices").forEach(group=>{
+  group.addEventListener("click",event=>{
+    const button=event.target.closest("button");
+    if(!button || !group.contains(button)) return;
+    group.querySelectorAll("button").forEach(x=>x.classList.remove("sel"));
+    button.classList.add("sel");
+    state[group.dataset.g]=button.dataset.v;
+  });
+});
+
+document.getElementById("go").addEventListener("click",make);
+document.getElementById("again").addEventListener("click",make);
+
+document.getElementById("save").addEventListener("click",()=>{
+  const history=JSON.parse(localStorage.getItem("dogPlans")||"[]");
+  history.unshift(window.cur);
+  localStorage.setItem("dogPlans",JSON.stringify(history.slice(0,30)));
+  render();
+  alert("Økten er lagret 🐾");
+});
+
+function del(i){
+  const history=JSON.parse(localStorage.getItem("dogPlans")||"[]");
+  history.splice(i,1);
+  localStorage.setItem("dogPlans",JSON.stringify(history));
+  render();
+}
+window.del=del;
+
+function render(){
+  const history=JSON.parse(localStorage.getItem("dogPlans")||"[]");
+  const el=document.getElementById("history");
+  el.innerHTML=history.length
+    ? history.map((x,i)=>
+      '<div class="step"><b>'+x.date+" · "+x.time+" min</b><div class=\"small\">"+x.focus+" · "+x.place+" · "+x.level+
+      "</div><div>"+x.items.join(" · ")+'</div><button onclick="del('+i+')">Slett</button></div>'
+    ).join("")
+    : '<p class="small">Ingen lagrede økter ennå.</p>';
+}
+
+render();
+</script>
+</body>
+</html>
