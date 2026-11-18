@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#34483d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Eir og Camillas desember"><link rel="manifest" href="manifest.webmanifest"><title>Eir og Camillas desember</title>
+<style>
+:root{--g:#34483d;--cream:#f7f4ec;--card:#fffefa;--muted:#69736b;--line:#e6e1d7;--gold:#c39a54}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:#26332b;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:760px;margin:auto;padding:20px 15px 44px}header{background:var(--g);color:white;border-radius:20px;padding:23px 20px}
+h1{font-size:27px;line-height:1.15;margin:0 0 8px}header p{margin:0;color:#e4e9e3;line-height:1.45}
+.progress{margin-top:17px}.progressrow{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.track{height:9px;background:#ffffff38;border-radius:20px;overflow:hidden}.bar{height:100%;width:0;background:#e8c98c}
+.intro{font-size:14px;color:var(--muted);line-height:1.5;margin:14px 2px 17px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{min-height:112px;border:1px solid #d8cba9;border-radius:15px;background:linear-gradient(145deg,#496252,#2f4438);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;position:relative;box-shadow:0 3px 0 #c7b58e;transition:transform .12s,filter .12s;padding:10px}
+.tile:active{transform:translateY(2px);box-shadow:0 1px 0 #c7b58e}
+.tile .door-num{font-size:29px;font-weight:850;line-height:1;color:#f4dfb2;text-shadow:0 1px 2px #1c3025}
+.tile .door-mark{font-size:19px;line-height:1}.tile small{font-size:10px;color:#e4e9e3;letter-spacing:.06em;text-transform:uppercase}
+.tile.done-door{background:linear-gradient(145deg,#7b8d70,#52694f);border-color:#c5d1bd}
+.tile.opened{background:#fffefa;color:#34483d;border:1px solid var(--line);box-shadow:none;cursor:default;align-items:stretch;text-align:left;min-height:0;padding:14px;grid-column:1/-1}
+.tile.opened .door-num{font-size:12px;color:var(--gold);text-shadow:none}
+.tile.opened .door-mark,.tile.opened small{display:none}
+.tile.opened .reveal-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.tile.opened .tag{font-size:10px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;color:var(--g);background:#e9eee7;border-radius:20px;padding:4px 8px}
+.tile.opened h2{font-size:16px;margin:0 0 5px}
+.tile.opened .desc{font-size:13.5px;line-height:1.48;color:#59635b;margin:0}
+.tile.opened.done{background:#edf1eb;border-color:#cbd6ca}
+.tile.opened.done h2{text-decoration:line-through;color:#68756a}
+.reveal-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}
+.done-label{display:flex;align-items:center;gap:7px;font-size:13px;color:#536257}
+.done-label input{width:20px;height:20px;accent-color:var(--g)}
+.close-btn{border:1px solid var(--line);background:transparent;border-radius:20px;padding:6px 10px;color:#59635b;font:inherit;font-size:12px}
+footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:17px;color:var(--muted);font-size:12px}
+@media(min-width:580px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.tile.opened{grid-column:1/-1}}
+</style></head><body><main>
+<header><h1>🎄 Eir og Camillas desember</h1><p>24 små treningsoppgaver – trening, miljø og samarbeid</p>
+<div class="progress"><div class="progressrow"><span>Gjennomførte luker</span><strong id="count">0 av 24</strong></div><div class="track"><div class="bar" id="bar"></div></div></div></header>
+<p class="intro">24 luker med små treningsoppgaver – men innholdet er hemmelig til du åpner dem! Trykk på en luke for å avsløre dagens oppgave. Du kan åpne lukene i valgfri rekkefølge, og krysse av når dere er ferdige. ❤️</p>
+<section class="grid" id="days"></section>
+<footer><span>Avkryssing lagres i nettleseren på denne enheten.</span><button id="reset">Nullstill</button></footer>
+</main><script>
+const tasks=[
+["Konkurranselydighet","Lineføring: vendinger og tempo","Gå en kort sekvens med høyre- og venstrevendinger og én tempoforandring. Belønn at hunden holder posisjon og følger deg gjennom endringene."],
+["Nosework","Ett enkelt innendørssøk","Lag ett søk med bjørkeduft på et lett tilgjengelig sted. Varier gjerne rommet, men hold selve gjemmestedet enkelt. La hunden søke selvstendig."],
+["Rally klasse 1","Kort skiltsekvens","Sett sammen 3–4 kjente klasse 1-skilt. Se etter jevn flyt, tydelige moment og god plassering mellom skiltene."],
+["Bruks – feltsøk","Gjenstandsinteresse","Lek eller belønn for interesse for én liten, kjent feltgjenstand. La hunden finne den på kort avstand i et lite område. Avslutt med en god belønning."],
+["Miljøtrening","Rolig observasjon på nytt sted","Finn et sted med litt aktivitet på god avstand. La hunden observere sammen med deg, belønn frivillig kontakt og ro. Øk avstanden hvis hunden blir urolig."],
+["Konkurranselydighet","Dekk fra holdt","Tren på rask og tydelig neddekk fra holdt. Ta 3–5 repetisjoner med god pause. Belønn både reaksjonen og at hunden blir liggende til frisignal."],
+["Nosework","Emballasjesøk","Bruk 5–7 esker og én duftbærer. La hunden undersøke systematisk og jobbe selvstendig. Prøv gjerne å variere hvilken eske som inneholder duften."],
+["Bruks – spor","Finne starten på sporet","Legg et kort, enkelt spor med tydelig start og én gjenstand eller belønning. Gi hunden tid til å undersøke starten før dere går videre."],
+["Rally klasse 2","Sidebytte mellom ben","Tren skiltmomentet separat først. Belønn et rolig, tydelig sidebytte og gå noen få steg videre på ny side."],
+["Konkurranselydighet","Innkalling med presis avslutning","Tren noen få innkallinger og legg vekt på at hunden kommer raskt inn og avslutter slik dere ønsker i klasse 1. Belønn kvalitet, ikke bare fart."],
+["Miljøtrening","Underlag og underlagsskifte","Gå en liten runde over 2–3 trygge underlag, for eksempel grus, gress og en gummimatte. La hunden velge tempo og belønn frivillig utforsking."],
+["Bruks – feltsøk","Lite felt med flere gjenstander","Lag et lite felt med 2–3 kjente gjenstander. La hunden søke selvstendig og belønn funnene. Hold området oversiktlig, men la henne jobbe litt for å finne dem."],
+["Rally klasse 1","Åttetall rundt kjegler","Tren åttetall i rolig tempo. Se på egen plassering og linje, og belønn at hunden holder posisjonen gjennom begge buene."],
+["Konkurranselydighet","Fremadsending med stå","Tren på kort avstand mot et tydelig mål. Belønn at hunden løper målrettet og stopper på signal. Del opp momentet hvis det trengs."],
+["Triks / hverdag","Bakpartskontroll på lav plattform","La frambena stå på en lav, stødig plattform og belønn små bevegelser med bakbeina rundt. Noen få repetisjoner er nok."],
+["Konkurranselydighet","Fri ved fot: start og hold posisjon","Tren på oppstarten og de første meterne i fri ved fot. Varier hvor kort sekvensen er, og belønn at hunden finner riktig posisjon fra start."],
+["Bruks – spor","En enkel vinkel","Legg et kort spor med én rolig 90-graders vinkel. Gjør sporet lett og belønn rolig, selvstendig sporing gjennom vinkelen."],
+["Rally klasse 2","Helt om mot hverandre","Tren skiltmomentet separat i lavt tempo. Fokuser på at dere får til vendingen samtidig uten å kollidere eller miste flyten."],
+["Konkurranselydighet","Posisjonsskifter med presisjon","Tren 2–3 kjente posisjonsskifter. Se etter raske skifter og at hunden holder utgangspunktet uten å krype framover."],
+["Miljøtrening","Utforsk et nytt turområde","Gå en kort tur et sted dere ikke pleier å gå. La hunden få undersøke omgivelsene og belønn gjerne frivillig kontakt underveis. Ingen krav om lydighet – bare en hyggelig miljøtur sammen."],
+["Nosework","To små søk med ulik plassering","Lag to korte søk med kjent duft. Plasser kilden ulikt – for eksempel lavt i det ene og litt høyere i det andre, men alltid trygt tilgjengelig."],
+["Rally klasse 2","Kort sekvens med sidebytte","Sett sammen sidebytte mellom ben og et par kjente skilt. Tren på at hunden finner ny posisjon og at dere beholder flyten gjennom sekvensen."],
+["Forstyrrelser / hverdag","Passering med kontakt tilbake","Passer en person, sykkel eller hund på en avstand der dere kan jobbe. La henne gjerne registrere forstyrrelsen, og belønn at hun frivillig vender oppmerksomheten tilbake til deg."],
+["Valgfri favoritt","Julebonus – velg selv","Velg den øvelsen dere likte best i kalenderen. Gjør noen få repetisjoner på et nivå der hunden lykkes, og avslutt med en ekstra god belønning."]
+];
+const key="hundejulekalender-2026-secret";
+let state={opened:{},done:{}};
+try{state=JSON.parse(localStorage.getItem(key)||'{"opened":{},"done":{}}')}catch(e){}
+state.opened=state.opened||{};state.done=state.done||{};
+const root=document.getElementById("days");
+function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}const n=tasks.filter((_,i)=>state.done[i]).length;document.getElementById("count").textContent=n+" av 24";document.getElementById("bar").style.width=(n/24*100)+"%"}
+function render(){
+ root.innerHTML="";
+ tasks.forEach((t,i)=>{
+  const opened=!!state.opened[i],done=!!state.done[i];
+  const tile=document.createElement(opened?"article":"button");
+  tile.className="tile"+(opened?" opened":"")+(done?" done":"")+(done&&!opened?" done-door":"");
+  if(!opened){
+   tile.type="button";
+   const num=document.createElement("span");num.className="door-num";num.textContent=i+1;
+   const mark=document.createElement("span");mark.className="door-mark";mark.textContent="✦";
+   const small=document.createElement("small");small.textContent="Trykk for å åpne";
+   tile.append(num,mark,small);
+   tile.addEventListener("click",()=>{state.opened[i]=true;save();render()});
+  }else{
+   const top=document.createElement("div");top.className="reveal-top";
+   const num=document.createElement("span");num.className="door-num";num.textContent="LUKE "+String(i+1).padStart(2,"0");
+   const tag=document.createElement("span");tag.className="tag";tag.textContent=t[0];
+   top.append(num,tag);
+   const h=document.createElement("h2");h.textContent=t[1];
+   const desc=document.createElement("p");desc.className="desc";desc.textContent=t[2];
+   const actions=document.createElement("div");actions.className="reveal-actions";
+   const label=document.createElement("label");label.className="done-label";
+   const cb=document.createElement("input");cb.type="checkbox";cb.checked=done;
+   const txt=document.createElement("span");txt.textContent="Gjennomført";
+   label.append(cb,txt);
+   cb.addEventListener("change",()=>{state.done[i]=cb.checked;save();render()});
+   const close=document.createElement("button");close.type="button";close.className="close-btn";close.textContent="Lukk igjen";
+   close.addEventListener("click",()=>{state.opened[i]=false;save();render()});
+   actions.append(label,close);
+   tile.append(top,h,desc,actions);
+  }
+  root.append(tile);
+ });
+}
+document.getElementById("reset").addEventListener("click",()=>{if(confirm("Vil du nullstille alle lukene og avkryssingene?")){state={opened:{},done:{}};save();render()}});
+render();save();
+if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {})); }
+</script></body></html>
